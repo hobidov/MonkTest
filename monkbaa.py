@@ -16,6 +16,7 @@ except Exception:
 PALETTE = {
     "primary": "#FF6A2A",     # main orange
     "orange": "#FF6A2A",
+    "coral": "#F59E0B", 
     "blue": "#4DB7E5",
     "purple": "#7C3AED",
     "teal": "#14B8A6",
