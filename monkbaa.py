@@ -24,12 +24,12 @@ PALETTE = {
 }
 
 STAGE_COLORS = {
-    ("Social", "Spark", "Outcome"): PALETTE["primary"],
-    ("Social", "Growth", "Outcome"): PALETTE["purple"],   # removed red
-    ("Social", "Horizon", "Outcome"): PALETTE["gold"],
-    ("Cultural", "Spark", "Outcome"): PALETTE["blue"],
-    ("Cultural", "Growth", "Outcome"): PALETTE["purple"],
-    ("Cultural", "Horizon", "Outcome"): PALETTE["teal"],
+    ("Social", "Spark"): PALETTE["primary"],
+    ("Social", "Growth"): PALETTE["purple"],   # removed red
+    ("Social", "Horizon"): PALETTE["gold"],
+    ("Cultural", "Spark"): PALETTE["blue"],
+    ("Cultural", "Growth"): PALETTE["purple"],
+    ("Cultural", "Horizon"): PALETTE["teal"],
 }
 
 BOT_INTRO = "Ask me about Social Spark, Social Horizon, Cultural Growth, Cultural Horizon, outcomes, or recommendations."
@@ -241,6 +241,37 @@ def outcome_stats(mapped_rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         items.append({"category": category, "stage": stage, "outcome": outcome, "value": avg(values), "label": f"{outcome[:52]}{'…' if len(outcome) > 52 else ''}"})
     return sorted(items, key=lambda x: x["value"], reverse=True)
 
+def cultural_stacked_data(rows: List[Dict[str, Any]]) -> pd.DataFrame:
+    data = []
+
+    for row in rows:
+        if row["category"] != "Cultural":
+            continue
+
+        sentiment = classify_sentiment(row["score"])
+
+        data.append({
+            "indicator": row["outcome"],
+            "sentiment": sentiment,
+            "value": 1
+        })
+
+    if not data:
+        return pd.DataFrame()
+
+    df = pd.DataFrame(data)
+
+    df_grouped = (
+        df.groupby(["indicator", "sentiment"])
+        .sum()
+        .reset_index()
+    )
+
+    total = df_grouped.groupby("indicator")["value"].transform("sum")
+    df_grouped["percentage"] = (df_grouped["value"] / total) * 100
+
+    return df_grouped
+
 def compute_analytics(filtered_rows: List[Dict[str, Any]], source_row_count: int) -> Dict[str, Any]:
     def by_category_stage(category: str, stage: str) -> List[Dict[str, Any]]:
         return [row for row in filtered_rows if row["category"] == category and row["stage"] == stage]
@@ -410,10 +441,10 @@ def normalize_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
 def kpi_card(label: str, value: int, category: str, stage: str, color: str):
     st.markdown(f"""
-        <div class="kpi-card" style="background:white;border:1px solid #f1f1f1;border-radius:24px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.06);min-height:190px;">
+        <div class="kpi-card" style="background:white;border:1px solid #f1f1f1;border-radius:24px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,0.06);min-height:150px;">
           <div style="font-size:13px;color:#6b7280;margin-bottom:6px;">{category} · {stage}</div>
           <div style="font-size:17px;font-weight:700;line-height:1.4;margin-bottom:8px;">{label}</div>
-          <div style="font-size:40px;font-weight:900;color:{color};margin-top:6px;">{value}%</div>
+          <div style="font-size:28px;font-weight:900;color:{color};margin-top:6px;">{value}%</div>
         </div>
     """, unsafe_allow_html=True)
 
@@ -585,9 +616,12 @@ with main_col:
         })
 
         fig = px.bar(df_compare, x="Stage", y="Score")
-        fig.update_layout(height=350)
+        fig.update_layout(
+             height=350,
+             yaxis_range=[0, 100]
+        )
         st.plotly_chart(fig, use_container_width=True)
-
+        st.caption("Compares Social Spark, Growth, and Horizon scores to highlight development gaps.")
     gap = social_horizon - social_growth
     st.caption(f"Growth is {gap} points lower than Horizon, highlighting a development gap.")
 
@@ -601,7 +635,7 @@ with main_col:
                 st.markdown('<div class="side-card">', unsafe_allow_html=True)
                 # ✅ Cultural Stacked Chart (ADD RIGHT AFTER LOOP)
 
-                st.subheader(f"Outcome Breakdown — {category} {stage}")
+                st.subheader(f"{category} {stage} Outcomes")
                 if subset:
                     bar_rows(subset, "value", STAGE_COLORS[(category, stage)], "%")
                 else:
@@ -625,12 +659,12 @@ with main_col:
     with s2:
         st.markdown('<div class="side-card">', unsafe_allow_html=True)
         st.subheader("Behaviour Distribution")
+        st.caption("Highlights actions taken by participants after the performance.")
         bar_rows(behaviour_counts, "count", PALETTE["coral"])
         st.markdown("</div>", unsafe_allow_html=True)
 
     s3, s4 = st.columns(2)
     with s3:
-        st.markdown('<div class="side-card">', unsafe_allow_html=True)
         st.markdown('<div class="side-card">', unsafe_allow_html=True)
         st.subheader("Cultural Outcomes Breakdown")
 
