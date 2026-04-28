@@ -644,14 +644,17 @@ with main_col:
         for col, (category, stage) in zip(cols, stage_pairs[i:i+2]):
             subset = [item for item in analytics["outcomeStats"] if item["category"] == category and item["stage"] == stage]
             with col:
-                with st.container():
-                   st.subheader(f"{category} {stage} Outcomes")
+                st.markdown('<div class="side-card">', unsafe_allow_html=True)
 
-                   if subset:
-                       bar_rows(subset, "value", STAGE_COLORS[(category, stage)], "%")
-                       st.caption("Shows performance across key outcomes in this category.")
-                   else:
-                       st.info("No data available.")
+                st.subheader(f"{category} {stage} Outcomes")
+
+                if subset:
+                   bar_rows(subset, "value", STAGE_COLORS[(category, stage)], "%")
+                   st.caption("Shows performance across key outcomes in this category.")
+                else:
+                    st.info("No data available.")
+
+                st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown('<div class="banner-support" style="margin-top:16px;"><div style="font-size:13px;font-weight:700;text-transform:uppercase;">Supporting Impact Charts</div><div style="margin-top:4px;font-size:14px;color:#4b5563;">Contextual metrics that support interpretation of core outcomes, including response distribution and engagement patterns.</div></div>', unsafe_allow_html=True)
 
