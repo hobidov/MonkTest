@@ -307,7 +307,6 @@ def sentiment_distribution(mapped_rows: List[Dict[str, Any]]) -> pd.DataFrame:
     return df
 
 def build_bot_reply(prompt: str, analytics: Dict[str, Any]) -> str:
-
     try:
         context = {
             "overall_score": analytics["overall"],
@@ -350,12 +349,14 @@ DATA:
                 "temperature": 0.7
             }
         )
+
         result = response.json()
 
-# DEBUG SAFETY (VERY IMPORTANT)
+        # ✅ SAFE HANDLING
         if "choices" not in result:
-           return f"API Error: {result}"
-        return response.json()["choices"][0]["message"]["content"]
+            return f"API Error: {result}"
+
+        return result["choices"][0]["message"]["content"]
 
     except Exception as e:
         return f"Error: {str(e)}"
@@ -399,7 +400,16 @@ Data:
         }
     )
 
-    return response.json()["choices"][0]["message"]["content"]    
+    result = response.json()
+
+# ✅ SAFE HANDLING
+    if "choices" not in result:
+        return f"API Error: {result}"
+
+    try:
+       return result["choices"][0]["message"]["content"]
+    except Exception:
+       return "AI summary could not be generated."    
 
 def create_report_text(analytics: Dict[str, Any], summary_name: Optional[str] = None) -> str:
     import json
