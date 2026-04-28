@@ -403,7 +403,7 @@ Data:
 
 def create_report_text(analytics: Dict[str, Any], summary_name: Optional[str] = None) -> str:
     import json
-    ai_summary = generate_ai_summary_together_cached(str(analytics))
+    ai_summary = generate_ai_summary_together_cached(json.dumps(analytics))
     strongest = analytics["strongest"]
     weakest = analytics["weakest"]
     social_spark = find_kpi(analytics["kpis"], "Social Spark")
