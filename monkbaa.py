@@ -453,10 +453,20 @@ def normalize_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
 def kpi_card(label: str, value: int, category: str, stage: str, color: str):
     st.markdown(f"""
-        <div class="kpi-card" style="background:white;border:1px solid #f1f1f1;border-radius:24px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,0.06);min-height:150px;">
-          <div style="font-size:13px;color:#6b7280;margin-bottom:6px;">{category} · {stage}</div>
-          <div style="font-size:17px;font-weight:700;line-height:1.4;margin-bottom:8px;">{label}</div>
-          <div style="font-size:28px;font-weight:900;color:{color};margin-top:6px;">{value}%</div>
+        <div class="kpi-card" style="
+            background:white;
+            border:1px solid #f1f1f1;
+            border-radius:20px;
+            padding:18px;
+            box-shadow:0 4px 16px rgba(0,0,0,0.05);
+            min-height:140px;
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
+        ">
+          <div style="font-size:12px;color:#9ca3af;">{category} · {stage}</div>
+          <div style="font-size:16px;font-weight:700;line-height:1.4;">{label}</div>
+          <div style="font-size:30px;font-weight:900;color:{color};">{value}%</div>
         </div>
     """, unsafe_allow_html=True)
 
@@ -464,19 +474,22 @@ def bar_rows(items: List[Dict[str, Any]], value_key: str, color: str, pct_suffix
     if not items:
         st.info("No data available.")
         return
+
     max_value = max(float(item[value_key]) for item in items)
     max_value = max(max_value, 1.0)
+
     for item in items:
         value = float(item[value_key])
         pct = (value / max_value) * 100
+
         st.markdown(f"""
-            <div style="margin-bottom:12px;">
-              <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px;margin-bottom:6px;">
-                <div style="flex:1;min-width:0;">{item['label']}</div>
+            <div style="margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:4px;">
+                <div style="flex:1;color:#374151;">{item['label']}</div>
                 <div style="font-weight:700;">{int(round(value))}{pct_suffix}</div>
               </div>
-              <div style="height:14px;background:#f1f5f9;border-radius:999px;overflow:hidden;">
-                <div style="width:{pct:.1f}%;height:14px;background:{color};border-radius:999px;"></div>
+              <div style="height:10px;background:#eef2f7;border-radius:999px;">
+                <div style="width:{pct:.1f}%;height:10px;background:{color};border-radius:999px;"></div>
               </div>
             </div>
         """, unsafe_allow_html=True)
@@ -496,31 +509,30 @@ st.markdown("""
 
 /* BANNERS */
 .banner-core { 
-    background:#EEF6F1;
-    border:1px solid #d8efe2;
-    border-radius:20px;
-    padding:16px 18px;
-    margin-bottom:20px;
-    line-height:1.5;
+    background:#f0fdf4;
+    border:1px solid #d1fae5;
+    border-radius:16px;
+    padding:14px 16px;
+    margin-bottom:18px;
 }
 
 .banner-support { 
-    background:#EEF6FB;
-    border:1px solid #d7ebf7;
-    border-radius:20px;
-    padding:16px 18px;
-    margin-bottom:20px;
-    line-height:1.5;
+    background:#eff6ff;
+    border:1px solid #dbeafe;
+    border-radius:16px;
+    padding:14px 16px;
+    margin-bottom:18px;
 }
+
 
 /* CARDS */
 .side-card { 
     background:white;
-    border:1px solid #f1f1f1;
-    border-radius:22px;
-    padding:18px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.06);
-    margin-bottom:18px;
+    border:1px solid #f3f4f6;
+    border-radius:18px;
+    padding:16px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.04);
+    margin-bottom:16px;
 }
 
 /* KPI SPACING */
@@ -594,10 +606,16 @@ with top_left:
     st.download_button("Download report", data=report_text.encode("utf-8"), file_name="monkey_baa-impact-report.txt", mime="text/plain", use_container_width=True)
 with top_mid:
     st.markdown(f"""
-    <div style="text-align:center;">
-      <div style="font-size:14px;font-weight:600;color:#6b7280;">Monkey Baa Outcome Dashboard</div>
-      <div style="font-size:32px;font-weight:900;">Framework-Aligned Impact Analysis</div>
-      <div style="margin-top:6px;font-size:14px;color:#6b7280;">{uploaded_file.name} · {len(source_rows)} rows · {len(df.columns)} columns · {len(sheets)} sheet(s){'' if selected_show == 'All shows' else ' · Filter: ' + selected_show}</div>
+    <div style="text-align:center;padding:10px 0;">
+      <div style="font-size:13px;font-weight:600;color:#9ca3af;letter-spacing:1px;">
+        MONKEY BAA DASHBOARD
+      </div>
+      <div style="font-size:34px;font-weight:900;">
+        Impact Analysis
+      </div>
+      <div style="margin-top:6px;font-size:13px;color:#6b7280;">
+        {uploaded_file.name} · {len(source_rows)} rows · {len(df.columns)} cols
+      </div>
     </div>
     """, unsafe_allow_html=True)
 with top_right:
@@ -747,29 +765,59 @@ with main_col:
         st.info("No mapped data available.")
     st.caption(f"Page {page} of {page_count}")
     st.markdown("</div>", unsafe_allow_html=True)
-
 with side_col:
     st.markdown('<div class="side-card">', unsafe_allow_html=True)
-    st.subheader("Gen AI Insight Bot")
+    st.markdown("### Gen AI Insight Bot")
+
     for message in st.session_state.messages:
         if message["role"] == "assistant":
-            st.markdown(f'<div style="white-space:pre-line;border:1px solid #f6d3c7;background:white;border-radius:18px;padding:12px;margin-bottom:10px;">{message["content"]}</div>', unsafe_allow_html=True)
+            st.markdown(f"""
+            <div style="
+                background:#f9fafb;
+                border-radius:16px;
+                padding:12px;
+                margin-bottom:10px;
+                border:1px solid #f1f5f9;
+            ">
+                {message["content"]}
+            </div>
+            """, unsafe_allow_html=True)
         else:
-            st.markdown(f'<div style="white-space:pre-line;background:#FF6A2A;color:white;border-radius:18px;padding:12px;margin-bottom:10px;margin-left:24px;">{message["content"]}</div>', unsafe_allow_html=True)
+            st.markdown(f"""
+            <div style="
+                background:#FF6A2A;
+                color:white;
+                border-radius:16px;
+                padding:12px;
+                margin-bottom:10px;
+                margin-left:30px;
+            ">
+                {message["content"]}
+            </div>
+            """, unsafe_allow_html=True)
+
     bot_input = st.text_area("Ask the bot for insights", height=120)
+
     if st.button("Get insight", use_container_width=True) and bot_input.strip():
         st.session_state.messages.append({"role": "user", "content": bot_input.strip()})
-        st.session_state.messages.append({"role": "assistant", "content": build_bot_reply(bot_input.strip(), analytics)})
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": build_bot_reply(bot_input.strip(), analytics)
+        })
         st.rerun()
 
     st.caption("Suggested questions:")
+
     for question in PROMPT_SUGGESTIONS:
         if st.button(question, key=question, use_container_width=True):
             st.session_state.messages.append({"role": "user", "content": question})
-            st.session_state.messages.append({"role": "assistant", "content": build_bot_reply(question, analytics)})
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": build_bot_reply(question, analytics)
+            })
             st.rerun()
 
-    st.markdown('<div class="side-card" style="margin-top:14px;">', unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
     st.markdown("**Framework Quality Summary**")
     st.write(f"**Source rows:** {analytics['dataQuality']['sourceRows']}")
     st.write(f"**Mapped records:** {analytics['dataQuality']['mappedRows']}")
