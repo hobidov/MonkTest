@@ -15,6 +15,7 @@ except Exception:
 
 PALETTE = {
     "primary": "#FF6A2A",     # main orange
+    "orange": "#FF6A2A",
     "blue": "#4DB7E5",
     "purple": "#7C3AED",
     "teal": "#14B8A6",
@@ -62,7 +63,7 @@ MAPPING_RULES = [
 ]
 
 DEFAULT_KPIS = [
-    {"label": "Social Spark", "value": 0, "category": "Social", "stage": "Spark", "color": PALETTE["orange"]},
+    {"label": "Social Spark", "value": 0, "category": "Social", "stage": "Spark", "color": PALETTE["primary"]},
     {"label": "Social Growth", "value": 0, "category": "Social", "stage": "Growth", "color": PALETTE["coral"]},
     {"label": "Social Horizon", "value": 0, "category": "Social", "stage": "Horizon", "color": PALETTE["gold"]},
     {"label": "Cultural Spark", "value": 0, "category": "Cultural", "stage": "Spark", "color": PALETTE["blue"]},
