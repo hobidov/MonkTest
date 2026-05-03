@@ -891,6 +891,7 @@ with main_col:
     """, unsafe_allow_html=True)
 
     # 🔥 OUTCOME COMPARISON (CLEAN CARD)
+    st.markdown('<div style="height:12px;"></div>', unsafe_allow_html=True)
     spark = find_kpi(analytics["kpis"], "Social Spark")["value"]
     growth = find_kpi(analytics["kpis"], "Social Growth")["value"]
     horizon = find_kpi(analytics["kpis"], "Social Horizon")["value"]
