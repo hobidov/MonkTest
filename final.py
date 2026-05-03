@@ -858,7 +858,23 @@ with top_mid:
     </div>
     """, unsafe_allow_html=True)
 with top_right:
-    st.metric("Overall", f"{analytics['overall']}%")
+    st.markdown(f"""
+    <div style="
+        background:#EAF7F4;
+        border:1px solid #ccebe4;
+        border-radius:16px;
+        padding:14px 16px;
+        text-align:center;
+        box-shadow:0 1px 6px rgba(0,0,0,0.05);
+    ">
+      <div style="font-size:13px;font-weight:700;color:#0f766e;text-transform:uppercase;">
+        Overall
+      </div>
+      <div style="font-size:34px;font-weight:900;color:#14B8A6;line-height:1.1;margin-top:4px;">
+        {analytics['overall']}%
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 main_col, side_col = st.columns([3.2, 1.25], gap="large")
 
