@@ -731,6 +731,94 @@ div[data-testid="column"] {
     margin-bottom:10px;
 }
 
+.overall-score-card {
+    background:#EAF7F4;
+    border:1px solid #ccebe4;
+    border-radius:14px;
+    padding:10px 14px;
+    text-align:center;
+    box-shadow:0 1px 6px rgba(0,0,0,0.05);
+    max-width:160px;
+    margin-left:auto;
+}
+
+.overall-score-label {
+    font-size:11px;
+    font-weight:700;
+    color:#0f766e;
+    text-transform:uppercase;
+    letter-spacing:0;
+}
+
+.overall-score-value {
+    font-size:28px;
+    font-weight:900;
+    color:#14B8A6;
+    line-height:1.05;
+    margin-top:3px;
+}
+
+@media (max-width: 768px) {
+    .block-container {
+        padding-top: 1rem;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    div[data-testid="column"] {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .main-content-narrow {
+        max-width: 100%;
+    }
+
+    .banner-core,
+    .banner-support {
+        border-radius: 14px;
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+
+    .stApp div[data-testid="stVerticalBlockBorderWrapper"] {
+        padding: 10px !important;
+        margin-top: 8px !important;
+        margin-bottom: 10px !important;
+        border-radius: 14px !important;
+    }
+
+    .stApp div[class*="st-key-white_card"],
+    .stApp div[class*="st-key-white_card"] > div,
+    .stApp div[class*="st-key-white_card"] > div > div,
+    .stApp div[class*="st-key-white_card"] div[data-testid="stVerticalBlock"] {
+        border-radius: 14px !important;
+    }
+
+    h1 {
+        font-size: 1.65rem !important;
+    }
+
+    h2, h3 {
+        font-size: 1.05rem !important;
+    }
+
+    div[data-testid="stMetric"] {
+        width: 100%;
+    }
+
+    .overall-score-card {
+        max-width: 100%;
+        margin-left: 0;
+        margin-top: 10px;
+        padding: 12px;
+    }
+
+    .overall-score-value {
+        font-size: 26px;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -859,22 +947,9 @@ with top_mid:
     """, unsafe_allow_html=True)
 with top_right:
     st.markdown(f"""
-    <div style="
-        background:#EAF7F4;
-        border:1px solid #ccebe4;
-        border-radius:14px;
-        padding:10px 14px;
-        text-align:center;
-        box-shadow:0 1px 6px rgba(0,0,0,0.05);
-        max-width:160px;
-        margin-left:auto;
-    ">
-      <div style="font-size:11px;font-weight:700;color:#0f766e;text-transform:uppercase;letter-spacing:0;">
-        Overall
-      </div>
-      <div style="font-size:28px;font-weight:900;color:#14B8A6;line-height:1.05;margin-top:3px;">
-        {analytics['overall']}%
-      </div>
+    <div class="overall-score-card">
+      <div class="overall-score-label">Overall</div>
+      <div class="overall-score-value">{analytics['overall']}%</div>
     </div>
     """, unsafe_allow_html=True)
 
