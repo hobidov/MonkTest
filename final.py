@@ -559,7 +559,8 @@ def render_bar_card(
     if margin_top:
         st.markdown(f'<div style="height:{margin_top}px;"></div>', unsafe_allow_html=True)
 
-    with st.container(border=True):
+    key = "white_card_" + re.sub(r"[^a-z0-9]+", "_", title.lower()).strip("_")
+    with st.container(border=True, key=key):
         st.subheader(title)
         bar_rows(items, value_key, color, pct_suffix)
         if caption:
@@ -642,6 +643,21 @@ div[data-testid="stVerticalBlockBorderWrapper"],
 .stApp div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stMarkdownContainer"] {
     background: transparent !important;
     background-color: transparent !important;
+}
+
+.stApp div[class*="st-key-white_card"],
+.stApp div[class*="st-key-white_card"] > div,
+.stApp div[class*="st-key-white_card"] > div > div,
+.stApp div[class*="st-key-white_card"] div[data-testid="stVerticalBlock"],
+.stApp div[class*="st-key-white_card"] div[data-testid="stElementContainer"] {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    border-radius: 22px !important;
+}
+
+.stApp div[class*="st-key-white_card"] {
+    border: 1px solid #f1f1f1 !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06) !important;
 }
 
 /* COLUMN GAP FIX */
@@ -824,7 +840,7 @@ with main_col:
         {"label": "Horizon", "value": horizon},
     ]
 
-    with st.container(border=True):
+    with st.container(border=True, key="white_card_outcome_comparison"):
        st.markdown("### Outcome Comparison: Spark vs Growth vs Horizon")
        st.markdown(f"""
        <div style="font-size:14px;color:#4b5563;margin-top:6px;">
@@ -843,7 +859,7 @@ with main_col:
                if item["category"] == "Social" and item["stage"] == stage
            ]
 
-           with st.container(border=True):
+           with st.container(border=True, key=f"white_card_social_{stage.lower()}"):
                st.subheader(f"Social {stage} Outcomes")
                if subset:
                    bar_rows(subset, "value", STAGE_COLORS[("Social", stage)], "%")
@@ -859,7 +875,7 @@ with main_col:
                if item["category"] == "Cultural" and item["stage"] == stage
            ]
 
-           with st.container(border=True):
+           with st.container(border=True, key=f"white_card_cultural_{stage.lower()}"):
                st.subheader(f"Cultural {stage} Outcomes")
                if subset:
                    bar_rows(subset, "value", STAGE_COLORS[("Cultural", stage)], "%")
@@ -998,7 +1014,7 @@ with main_col:
 
 
     st.markdown('<div style="height:16px;"></div>', unsafe_allow_html=True)
-    with st.container(border=True):
+    with st.container(border=True, key="white_card_mapped_survey_data"):
         st.subheader("Mapped Survey Data")
         tf1, tf2, tf3 = st.columns(3)
         table_audience_options = ["All"] + sorted({row["audience"] for row in filtered_rows})
@@ -1022,7 +1038,7 @@ with main_col:
         st.caption(f"Page {page} of {page_count}")
 
 with side_col:
-    with st.container(border=True):
+    with st.container(border=True, key="white_card_insight_bot"):
         st.subheader("Gen AI Insight Bot")
         for message in st.session_state.messages:
             if message["role"] == "assistant":
@@ -1042,7 +1058,7 @@ with side_col:
                 st.session_state.messages.append({"role": "assistant", "content": build_bot_reply(question, analytics)})
                 st.rerun()
 
-    with st.container(border=True):
+    with st.container(border=True, key="white_card_quality_summary"):
         st.markdown("**Framework Quality Summary**")
         st.write(f"**Source rows:** {analytics['dataQuality']['sourceRows']}")
         st.write(f"**Mapped records:** {analytics['dataQuality']['mappedRows']}")
