@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-import html
 import math
 import re
 from typing import Any, Dict, List, Optional, Tuple
@@ -557,37 +556,14 @@ def render_bar_card(
     caption: str = "",
     margin_top: int = 0,
 ):
-    if not items:
-        rows_html = '<div style="font-size:14px;color:#6b7280;">No data available.</div>'
-    else:
-        max_value = max(float(item[value_key]) for item in items)
-        max_value = max(max_value, 1.0)
-        rows = []
-        for item in items:
-            value = float(item[value_key])
-            pct = (value / max_value) * 100
-            label = html.escape(str(item["label"]))
-            rows.append(f"""
-              <div style="margin-bottom:12px;">
-                <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px;margin-bottom:6px;">
-                  <div style="flex:1;min-width:0;">{label}</div>
-                  <div style="font-weight:700;">{int(round(value))}{pct_suffix}</div>
-                </div>
-                <div style="height:14px;background:#f1f5f9;border-radius:999px;overflow:hidden;">
-                  <div style="width:{pct:.1f}%;height:14px;background:{color};border-radius:999px;"></div>
-                </div>
-              </div>
-            """)
-        rows_html = "".join(rows)
+    if margin_top:
+        st.markdown(f'<div style="height:{margin_top}px;"></div>', unsafe_allow_html=True)
 
-    caption_html = f'<div style="font-size:13px;color:#6b7280;margin-top:10px;">{html.escape(caption)}</div>' if caption else ""
-    st.markdown(f"""
-    <div class="side-card" style="margin-top:{margin_top}px;">
-      <h3 style="margin-top:0;margin-bottom:14px;">{html.escape(title)}</h3>
-      {rows_html}
-      {caption_html}
-    </div>
-    """, unsafe_allow_html=True)
+    with st.container(border=True):
+        st.subheader(title)
+        bar_rows(items, value_key, color, pct_suffix)
+        if caption:
+            st.caption(caption)
 
 st.set_page_config(page_title="Monkey Baa Impact Dashboard", layout="wide")
 st.markdown("""
@@ -646,6 +622,7 @@ st.markdown("""
 
 div[data-testid="stVerticalBlockBorderWrapper"] {
     background: white !important;
+    background-color: white !important;
     border: 1px solid #f1f1f1 !important;
     border-radius: 22px;
     padding: 18px;
@@ -657,7 +634,13 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
 div[data-testid="stVerticalBlockBorderWrapper"] > div,
 div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stVerticalBlock"] {
     background: white !important;
+    background-color: white !important;
     border-radius: 22px;
+}
+
+div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stElementContainer"],
+div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stMarkdownContainer"] {
+    background-color: transparent !important;
 }
 
 /* COLUMN GAP FIX */
@@ -834,50 +817,21 @@ with main_col:
     growth = find_kpi(analytics["kpis"], "Social Growth")["value"]
     horizon = find_kpi(analytics["kpis"], "Social Horizon")["value"]
     gap = horizon - spark
-    comparison_max = max(spark, growth, horizon, 1)
+    comparison_data = [
+        {"label": "Spark", "value": spark},
+        {"label": "Growth", "value": growth},
+        {"label": "Horizon", "value": horizon},
+    ]
 
-    st.markdown(f"""
-    <div class="side-card">
-      <h3 style="margin-top:0;margin-bottom:10px;">Outcome Comparison: Spark vs Growth vs Horizon</h3>
-      <div style="font-size:14px;color:#4b5563;margin-bottom:18px;">
-        There is a <b>{gap}% gap</b> between initial engagement (Spark) and long-term impact (Horizon), indicating strong sustained outcomes beyond first impressions.
-      </div>
-
-      <div style="margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px;margin-bottom:6px;">
-          <div style="flex:1;min-width:0;">Spark</div>
-          <div style="font-weight:700;">{spark}%</div>
-        </div>
-        <div style="height:14px;background:#f1f5f9;border-radius:999px;overflow:hidden;">
-          <div style="width:{(spark / comparison_max) * 100:.1f}%;height:14px;background:{PALETTE["primary"]};border-radius:999px;"></div>
-        </div>
-      </div>
-
-      <div style="margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px;margin-bottom:6px;">
-          <div style="flex:1;min-width:0;">Growth</div>
-          <div style="font-weight:700;">{growth}%</div>
-        </div>
-        <div style="height:14px;background:#f1f5f9;border-radius:999px;overflow:hidden;">
-          <div style="width:{(growth / comparison_max) * 100:.1f}%;height:14px;background:{PALETTE["primary"]};border-radius:999px;"></div>
-        </div>
-      </div>
-
-      <div style="margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px;margin-bottom:6px;">
-          <div style="flex:1;min-width:0;">Horizon</div>
-          <div style="font-weight:700;">{horizon}%</div>
-        </div>
-        <div style="height:14px;background:#f1f5f9;border-radius:999px;overflow:hidden;">
-          <div style="width:{(horizon / comparison_max) * 100:.1f}%;height:14px;background:{PALETTE["primary"]};border-radius:999px;"></div>
-        </div>
-      </div>
-
-      <div style="font-size:13px;color:#6b7280;margin-top:10px;">
-        This chart highlights the performance gap between Spark, Growth, and Horizon outcomes.
-      </div>
-    </div>
-    """, unsafe_allow_html=True)
+    with st.container(border=True):
+       st.markdown("### Outcome Comparison: Spark vs Growth vs Horizon")
+       st.markdown(f"""
+       <div style="font-size:14px;color:#4b5563;margin-top:6px;">
+       There is a <b>{gap}% gap</b> between initial engagement (Spark) and long-term impact (Horizon), indicating strong sustained outcomes beyond first impressions.
+       </div>
+       """, unsafe_allow_html=True)
+       bar_rows(comparison_data, "value", PALETTE["primary"], "%")
+       st.caption("This chart highlights the performance gap between Spark, Growth, and Horizon outcomes.")
     col_left, col_right = st.columns(2)
 
 # 🔵 SOCIAL (LEFT)
@@ -888,7 +842,12 @@ with main_col:
                if item["category"] == "Social" and item["stage"] == stage
            ]
 
-           render_bar_card(f"Social {stage} Outcomes", subset, "value", STAGE_COLORS[("Social", stage)], "%")
+           with st.container(border=True):
+               st.subheader(f"Social {stage} Outcomes")
+               if subset:
+                   bar_rows(subset, "value", STAGE_COLORS[("Social", stage)], "%")
+               else:
+                   st.info("No data available.")
 
 
 # 🟣 CULTURAL (RIGHT)
@@ -899,7 +858,12 @@ with main_col:
                if item["category"] == "Cultural" and item["stage"] == stage
            ]
 
-           render_bar_card(f"Cultural {stage} Outcomes", subset, "value", STAGE_COLORS[("Cultural", stage)], "%")
+           with st.container(border=True):
+               st.subheader(f"Cultural {stage} Outcomes")
+               if subset:
+                   bar_rows(subset, "value", STAGE_COLORS[("Cultural", stage)], "%")
+               else:
+                   st.info("No data available.")
 
     st.markdown('<div class="banner-support" style="margin-top:16px;"><div style="font-size:13px;font-weight:700;text-transform:uppercase;">Supporting Impact Charts</div><div style="margin-top:4px;font-size:14px;color:#4b5563;">Contextual metrics that support interpretation of core outcomes, including response distribution and engagement patterns.</div></div>', unsafe_allow_html=True)
 
@@ -1032,59 +996,57 @@ with main_col:
        pass
 
 
-    st.markdown('<div class="side-card" style="margin-top:16px;">', unsafe_allow_html=True)
-    st.subheader("Mapped Survey Data")
-    tf1, tf2, tf3 = st.columns(3)
-    table_audience_options = ["All"] + sorted({row["audience"] for row in filtered_rows})
-    with tf1:
-        table_audience = st.selectbox("Audience filter", table_audience_options, key="table_audience")
-    with tf2:
-        table_category = st.selectbox("Category filter", ["All", "Social", "Cultural"], key="table_category")
-    with tf3:
-        table_stage = st.selectbox("Stage filter", ["All", "Spark", "Growth", "Horizon"], key="table_stage")
+    st.markdown('<div style="height:16px;"></div>', unsafe_allow_html=True)
+    with st.container(border=True):
+        st.subheader("Mapped Survey Data")
+        tf1, tf2, tf3 = st.columns(3)
+        table_audience_options = ["All"] + sorted({row["audience"] for row in filtered_rows})
+        with tf1:
+            table_audience = st.selectbox("Audience filter", table_audience_options, key="table_audience")
+        with tf2:
+            table_category = st.selectbox("Category filter", ["All", "Social", "Cultural"], key="table_category")
+        with tf3:
+            table_stage = st.selectbox("Stage filter", ["All", "Spark", "Growth", "Horizon"], key="table_stage")
 
-    filtered_table_rows = [row for row in filtered_rows if (table_audience == "All" or row["audience"] == table_audience) and (table_category == "All" or row["category"] == table_category) and (table_stage == "All" or row["stage"] == table_stage)]
-    page_size = 10
-    page_count = max(1, math.ceil(len(filtered_table_rows) / page_size))
-    page = st.number_input("Page", min_value=1, max_value=page_count, value=1, step=1)
-    start = (page - 1) * page_size
-    table_df = pd.DataFrame(filtered_table_rows[start:start + page_size])
-    if not table_df.empty:
-        st.dataframe(table_df[["audience", "show", "location", "outcome", "category", "stage", "score"]], use_container_width=True, hide_index=True)
-    else:
-        st.info("No mapped data available.")
-    st.caption(f"Page {page} of {page_count}")
-    st.markdown("</div>", unsafe_allow_html=True)
+        filtered_table_rows = [row for row in filtered_rows if (table_audience == "All" or row["audience"] == table_audience) and (table_category == "All" or row["category"] == table_category) and (table_stage == "All" or row["stage"] == table_stage)]
+        page_size = 10
+        page_count = max(1, math.ceil(len(filtered_table_rows) / page_size))
+        page = st.number_input("Page", min_value=1, max_value=page_count, value=1, step=1)
+        start = (page - 1) * page_size
+        table_df = pd.DataFrame(filtered_table_rows[start:start + page_size])
+        if not table_df.empty:
+            st.dataframe(table_df[["audience", "show", "location", "outcome", "category", "stage", "score"]], use_container_width=True, hide_index=True)
+        else:
+            st.info("No mapped data available.")
+        st.caption(f"Page {page} of {page_count}")
 
 with side_col:
-    st.markdown('<div class="side-card">', unsafe_allow_html=True)
-    st.subheader("Gen AI Insight Bot")
-    for message in st.session_state.messages:
-        if message["role"] == "assistant":
-            st.markdown(f'<div style="white-space:pre-line;border:1px solid #f6d3c7;background:white;border-radius:18px;padding:12px;margin-bottom:10px;">{message["content"]}</div>', unsafe_allow_html=True)
-        else:
-            st.markdown(f'<div style="white-space:pre-line;background:#4DB7E5;color:white;border-radius:18px;padding:12px;margin-bottom:10px;margin-left:24px;">{message["content"]}</div>', unsafe_allow_html=True)
-    bot_input = st.text_area("Ask the bot for insights", height=120, placeholder="e.g. What is the weakest outcome and how can it be improved?")
-    if st.button("Get insight", use_container_width=True) and bot_input.strip():
-        st.session_state.messages.append({"role": "user", "content": bot_input.strip()})
-        st.session_state.messages.append({"role": "assistant", "content": build_bot_reply(bot_input.strip(), analytics)})
-        st.rerun()
-
-    st.caption("Suggested questions:")
-    for question in PROMPT_SUGGESTIONS:
-        if st.button(question, key=question, use_container_width=True):
-            st.session_state.messages.append({"role": "user", "content": question})
-            st.session_state.messages.append({"role": "assistant", "content": build_bot_reply(question, analytics)})
+    with st.container(border=True):
+        st.subheader("Gen AI Insight Bot")
+        for message in st.session_state.messages:
+            if message["role"] == "assistant":
+                st.markdown(f'<div style="white-space:pre-line;border:1px solid #f6d3c7;background:white;border-radius:18px;padding:12px;margin-bottom:10px;">{message["content"]}</div>', unsafe_allow_html=True)
+            else:
+                st.markdown(f'<div style="white-space:pre-line;background:#4DB7E5;color:white;border-radius:18px;padding:12px;margin-bottom:10px;margin-left:24px;">{message["content"]}</div>', unsafe_allow_html=True)
+        bot_input = st.text_area("Ask the bot for insights", height=120, placeholder="e.g. What is the weakest outcome and how can it be improved?")
+        if st.button("Get insight", use_container_width=True) and bot_input.strip():
+            st.session_state.messages.append({"role": "user", "content": bot_input.strip()})
+            st.session_state.messages.append({"role": "assistant", "content": build_bot_reply(bot_input.strip(), analytics)})
             st.rerun()
 
-    st.markdown('<div class="side-card" style="margin-top:14px;">', unsafe_allow_html=True)
-    st.markdown("**Framework Quality Summary**")
-    st.write(f"**Source rows:** {analytics['dataQuality']['sourceRows']}")
-    st.write(f"**Mapped records:** {analytics['dataQuality']['mappedRows']}")
-    st.write(f"**Approx. mapping completion:** {analytics['dataQuality']['completion']}%")
-    st.write(f"**Show filter:** {selected_show}")
-    st.write(f"**Location filter:** {filter_location}")
-    st.write(f"**Strongest area:** {analytics['strongest']['label']}")
-    st.write(f"**Weakest area:** {analytics['weakest']['label']}")
-    st.markdown("</div>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True) 
+        st.caption("Suggested questions:")
+        for question in PROMPT_SUGGESTIONS:
+            if st.button(question, key=question, use_container_width=True):
+                st.session_state.messages.append({"role": "user", "content": question})
+                st.session_state.messages.append({"role": "assistant", "content": build_bot_reply(question, analytics)})
+                st.rerun()
+
+    with st.container(border=True):
+        st.markdown("**Framework Quality Summary**")
+        st.write(f"**Source rows:** {analytics['dataQuality']['sourceRows']}")
+        st.write(f"**Mapped records:** {analytics['dataQuality']['mappedRows']}")
+        st.write(f"**Approx. mapping completion:** {analytics['dataQuality']['completion']}%")
+        st.write(f"**Show filter:** {selected_show}")
+        st.write(f"**Location filter:** {filter_location}")
+        st.write(f"**Strongest area:** {analytics['strongest']['label']}")
+        st.write(f"**Weakest area:** {analytics['weakest']['label']}")
