@@ -620,26 +620,27 @@ st.markdown("""
     box-shadow: 0 2px 10px rgba(0,0,0,0.06);
 }
 
-div[data-testid="stVerticalBlockBorderWrapper"] {
-    background: white !important;
-    background-color: white !important;
+div[data-testid="stVerticalBlockBorderWrapper"],
+.stApp div[data-testid="stVerticalBlockBorderWrapper"],
+.stApp div[data-testid="stVerticalBlockBorderWrapper"] > div,
+.stApp div[data-testid="stVerticalBlockBorderWrapper"] > div > div,
+.stApp div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stVerticalBlock"] {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    border-radius: 22px !important;
+}
+
+.stApp div[data-testid="stVerticalBlockBorderWrapper"] {
     border: 1px solid #f1f1f1 !important;
-    border-radius: 22px;
-    padding: 18px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    margin-top: 12px;
-    margin-bottom: 18px;
+    padding: 18px !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06) !important;
+    margin-top: 12px !important;
+    margin-bottom: 18px !important;
 }
 
-div[data-testid="stVerticalBlockBorderWrapper"] > div,
-div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stVerticalBlock"] {
-    background: white !important;
-    background-color: white !important;
-    border-radius: 22px;
-}
-
-div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stElementContainer"],
-div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stMarkdownContainer"] {
+.stApp div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stElementContainer"],
+.stApp div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stMarkdownContainer"] {
+    background: transparent !important;
     background-color: transparent !important;
 }
 
