@@ -602,10 +602,10 @@ st.markdown("""
 .side-card { 
     background:white;
     border:1px solid #f1f1f1;
-    border-radius:22px;
-    padding:18px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.06);
-    margin-bottom:18px;
+    border-radius:16px;
+    padding:12px;
+    box-shadow:0 1px 6px rgba(0,0,0,0.05);
+    margin-bottom:12px;
 }
 
 /* KPI SPACING */
@@ -615,10 +615,10 @@ st.markdown("""
 
 .section-card {
     background: white;
-    border-radius: 22px;
-    padding: 18px;
-    margin-top: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border-radius: 16px;
+    padding: 12px;
+    margin-top: 8px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.05);
 }
 
 div[data-testid="stVerticalBlockBorderWrapper"],
@@ -628,15 +628,15 @@ div[data-testid="stVerticalBlockBorderWrapper"],
 .stApp div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stVerticalBlock"] {
     background: #ffffff !important;
     background-color: #ffffff !important;
-    border-radius: 22px !important;
+    border-radius: 16px !important;
 }
 
 .stApp div[data-testid="stVerticalBlockBorderWrapper"] {
     border: 1px solid #f1f1f1 !important;
-    padding: 18px !important;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06) !important;
-    margin-top: 12px !important;
-    margin-bottom: 18px !important;
+    padding: 12px !important;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.05) !important;
+    margin-top: 8px !important;
+    margin-bottom: 12px !important;
 }
 
 .stApp div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stElementContainer"],
@@ -652,18 +652,18 @@ div[data-testid="stVerticalBlockBorderWrapper"],
 .stApp div[class*="st-key-white_card"] div[data-testid="stElementContainer"] {
     background: #ffffff !important;
     background-color: #ffffff !important;
-    border-radius: 22px !important;
+    border-radius: 16px !important;
 }
 
 .stApp div[class*="st-key-white_card"] {
     border: 1px solid #f1f1f1 !important;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06) !important;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.05) !important;
 }
 
 /* COLUMN GAP FIX */
 div[data-testid="column"] {
-    padding-left:10px;
-    padding-right:10px;
+    padding-left:4px;
+    padding-right:4px;
 }
 
 /* CHAT */
