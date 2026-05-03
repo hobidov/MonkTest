@@ -566,6 +566,48 @@ def render_bar_card(
         if caption:
             st.caption(caption)
 
+def render_plotly_bar_card(
+    title: str,
+    items: List[Dict[str, Any]],
+    color: str,
+    caption: str = "",
+):
+    key = "white_card_" + re.sub(r"[^a-z0-9]+", "_", title.lower()).strip("_")
+    with st.container(border=True, key=key):
+        st.subheader(title)
+        if px and items:
+            chart_df = pd.DataFrame(items).sort_values(by="count", ascending=True)
+            fig = px.bar(
+                chart_df,
+                x="count",
+                y="label",
+                orientation="h",
+                color_discrete_sequence=[color],
+                text="count",
+            )
+            fig.update_layout(
+                height=max(240, 42 * len(chart_df)),
+                margin=dict(l=10, r=10, t=10, b=10),
+                xaxis_title="",
+                yaxis_title="",
+                plot_bgcolor="white",
+                paper_bgcolor="white",
+                showlegend=False,
+                bargap=0.35,
+            )
+            fig.update_traces(
+                textposition="outside",
+                marker=dict(line=dict(width=0)),
+                cliponaxis=False,
+            )
+            fig.update_xaxes(showgrid=False, visible=False)
+            fig.update_yaxes(showgrid=False)
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            bar_rows(items, "count", color)
+        if caption:
+            st.caption(caption)
+
 st.set_page_config(page_title="Monkey Baa Impact Dashboard", layout="wide")
 st.markdown("""
 <style>
@@ -950,15 +992,14 @@ with main_col:
 
     s3, s4 = st.columns(2)
     with s3:
-        render_bar_card(
+        render_plotly_bar_card(
             "Emotion Distribution",
             emotion_counts,
-            "count",
             PALETTE["primary"],
             caption="This chart shows the distribution of emotions experienced by participants.",
         )
     with s4:
-        render_bar_card("Audience Segmentation", audience_counts, "count", PALETTE["secondary"])
+        render_plotly_bar_card("Audience Segmentation", audience_counts, PALETTE["secondary"])
 
 
 # 🔥 SENTIMENT ANALYSIS (NOW OUTSIDE s4)
