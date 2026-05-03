@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+import html
 import math
 import re
 from typing import Any, Dict, List, Optional, Tuple
@@ -547,6 +548,47 @@ def bar_rows(items: List[Dict[str, Any]], value_key: str, color: str, pct_suffix
             </div>
         """, unsafe_allow_html=True)
 
+def render_bar_card(
+    title: str,
+    items: List[Dict[str, Any]],
+    value_key: str,
+    color: str,
+    pct_suffix: str = "",
+    caption: str = "",
+    margin_top: int = 0,
+):
+    if not items:
+        rows_html = '<div style="font-size:14px;color:#6b7280;">No data available.</div>'
+    else:
+        max_value = max(float(item[value_key]) for item in items)
+        max_value = max(max_value, 1.0)
+        rows = []
+        for item in items:
+            value = float(item[value_key])
+            pct = (value / max_value) * 100
+            label = html.escape(str(item["label"]))
+            rows.append(f"""
+              <div style="margin-bottom:12px;">
+                <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px;margin-bottom:6px;">
+                  <div style="flex:1;min-width:0;">{label}</div>
+                  <div style="font-weight:700;">{int(round(value))}{pct_suffix}</div>
+                </div>
+                <div style="height:14px;background:#f1f5f9;border-radius:999px;overflow:hidden;">
+                  <div style="width:{pct:.1f}%;height:14px;background:{color};border-radius:999px;"></div>
+                </div>
+              </div>
+            """)
+        rows_html = "".join(rows)
+
+    caption_html = f'<div style="font-size:13px;color:#6b7280;margin-top:10px;">{html.escape(caption)}</div>' if caption else ""
+    st.markdown(f"""
+    <div class="side-card" style="margin-top:{margin_top}px;">
+      <h3 style="margin-top:0;margin-bottom:14px;">{html.escape(title)}</h3>
+      {rows_html}
+      {caption_html}
+    </div>
+    """, unsafe_allow_html=True)
+
 st.set_page_config(page_title="Monkey Baa Impact Dashboard", layout="wide")
 st.markdown("""
 <style>
@@ -846,15 +888,7 @@ with main_col:
                if item["category"] == "Social" and item["stage"] == stage
            ]
 
-           st.markdown('<div class="side-card">', unsafe_allow_html=True)
-           st.subheader(f"Social {stage} Outcomes")
-
-           if subset:
-               bar_rows(subset, "value", STAGE_COLORS[("Social", stage)], "%")
-           else:
-               st.info("No data available.")
-
-           st.markdown("</div>", unsafe_allow_html=True)
+           render_bar_card(f"Social {stage} Outcomes", subset, "value", STAGE_COLORS[("Social", stage)], "%")
 
 
 # 🟣 CULTURAL (RIGHT)
@@ -865,15 +899,7 @@ with main_col:
                if item["category"] == "Cultural" and item["stage"] == stage
            ]
 
-           st.markdown('<div class="side-card">', unsafe_allow_html=True)
-           st.subheader(f"Cultural {stage} Outcomes")
-
-           if subset:
-               bar_rows(subset, "value", STAGE_COLORS[("Cultural", stage)], "%")
-           else:
-               st.info("No data available.")
-
-           st.markdown("</div>", unsafe_allow_html=True)
+           render_bar_card(f"Cultural {stage} Outcomes", subset, "value", STAGE_COLORS[("Cultural", stage)], "%")
 
     st.markdown('<div class="banner-support" style="margin-top:16px;"><div style="font-size:13px;font-weight:700;text-transform:uppercase;">Supporting Impact Charts</div><div style="margin-top:4px;font-size:14px;color:#4b5563;">Contextual metrics that support interpretation of core outcomes, including response distribution and engagement patterns.</div></div>', unsafe_allow_html=True)
 
@@ -885,10 +911,9 @@ with main_col:
 
     s1, s2 = st.columns(2)
     with s1:
-     st.markdown('<div class="side-card">', unsafe_allow_html=True)
-     st.subheader("Distribution by Show")
+     render_bar_card("Distribution by Show", show_counts, "count", PALETTE["primary"])
 
-     if px and show_counts:
+     if False and px and show_counts:
         df_show = pd.DataFrame(show_counts).sort_values(by="count", ascending=True)
 
         fig = px.bar(
@@ -920,28 +945,23 @@ with main_col:
         st.plotly_chart(fig, use_container_width=True)
 
      else:
-         bar_rows(show_counts, "count", PALETTE["primary"])
+         pass
 
-    st.markdown("</div>", unsafe_allow_html=True)
 
     s3, s4 = st.columns(2)
     with s3:
-        st.markdown('<div class="side-card">', unsafe_allow_html=True)
-        st.subheader("Emotion Distribution")
-        bar_rows(emotion_counts, "count", PALETTE["primary"])
-        st.caption("This chart shows the distribution of emotions experienced by participants.")
-        st.markdown("</div>", unsafe_allow_html=True)
+        render_bar_card(
+            "Emotion Distribution",
+            emotion_counts,
+            "count",
+            PALETTE["primary"],
+            caption="This chart shows the distribution of emotions experienced by participants.",
+        )
     with s4:
-        st.markdown('<div class="side-card">', unsafe_allow_html=True)
-        st.subheader("Audience Segmentation")
-        bar_rows(audience_counts, "count", PALETTE["secondary"])
-        st.markdown("</div>", unsafe_allow_html=True)
+        render_bar_card("Audience Segmentation", audience_counts, "count", PALETTE["secondary"])
 
 
 # 🔥 SENTIMENT ANALYSIS (NOW OUTSIDE s4)
-    st.markdown('<div class="side-card">', unsafe_allow_html=True)
-    st.subheader("Sentiment Analysis of Participant Feedback")
-
     sentiment_counts = {
        "Positive Experience": 0,
        "Mixed Response": 0,
@@ -961,18 +981,19 @@ with main_col:
            sentiment_counts["Could Be Improved"] += item["count"]
     
     sentiment_data = [{"label": k, "count": v} for k, v in sentiment_counts.items()]
+    render_bar_card(
+        "Sentiment Analysis of Participant Feedback",
+        sentiment_data,
+        "count",
+        PALETTE["secondary"],
+        caption="This chart groups participant responses into overall experience categories.",
+    )
 
-    bar_rows(sentiment_data, "count", PALETTE["secondary"])
-
-    st.caption("This chart groups participant responses into overall experience categories.")
-    st.markdown("</div>", unsafe_allow_html=True)
 
 
+    render_bar_card("Location Distribution", location_counts, "count", PALETTE["accent"], margin_top=16)
 
-    st.markdown('<div class="side-card" style="margin-top:16px;">', unsafe_allow_html=True)
-    st.subheader("Location Distribution")
-
-    if px and location_counts:
+    if False and px and location_counts:
        df_loc = pd.DataFrame(location_counts).sort_values(by="count", ascending=True)
 
        fig = px.bar(
@@ -1008,9 +1029,8 @@ with main_col:
        st.plotly_chart(fig, use_container_width=True)
 
     else:
-       bar_rows(location_counts, "count", PALETTE["accent"])
+       pass
 
-    st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown('<div class="side-card" style="margin-top:16px;">', unsafe_allow_html=True)
     st.subheader("Mapped Survey Data")
