@@ -788,31 +788,54 @@ with main_col:
     """, unsafe_allow_html=True)
 
     # 🔥 OUTCOME COMPARISON (CLEAN CARD)
-    with st.container(border=True):
+    spark = find_kpi(analytics["kpis"], "Social Spark")["value"]
+    growth = find_kpi(analytics["kpis"], "Social Growth")["value"]
+    horizon = find_kpi(analytics["kpis"], "Social Horizon")["value"]
+    gap = horizon - spark
+    comparison_max = max(spark, growth, horizon, 1)
 
-       st.markdown("### Outcome Comparison: Spark vs Growth vs Horizon")
+    st.markdown(f"""
+    <div class="side-card">
+      <h3 style="margin-top:0;margin-bottom:10px;">Outcome Comparison: Spark vs Growth vs Horizon</h3>
+      <div style="font-size:14px;color:#4b5563;margin-bottom:18px;">
+        There is a <b>{gap}% gap</b> between initial engagement (Spark) and long-term impact (Horizon), indicating strong sustained outcomes beyond first impressions.
+      </div>
 
-       spark = find_kpi(analytics["kpis"], "Social Spark")["value"]
-       growth = find_kpi(analytics["kpis"], "Social Growth")["value"]
-       horizon = find_kpi(analytics["kpis"], "Social Horizon")["value"]
+      <div style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px;margin-bottom:6px;">
+          <div style="flex:1;min-width:0;">Spark</div>
+          <div style="font-weight:700;">{spark}%</div>
+        </div>
+        <div style="height:14px;background:#f1f5f9;border-radius:999px;overflow:hidden;">
+          <div style="width:{(spark / comparison_max) * 100:.1f}%;height:14px;background:{PALETTE["primary"]};border-radius:999px;"></div>
+        </div>
+      </div>
 
-       gap = horizon - spark
+      <div style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px;margin-bottom:6px;">
+          <div style="flex:1;min-width:0;">Growth</div>
+          <div style="font-weight:700;">{growth}%</div>
+        </div>
+        <div style="height:14px;background:#f1f5f9;border-radius:999px;overflow:hidden;">
+          <div style="width:{(growth / comparison_max) * 100:.1f}%;height:14px;background:{PALETTE["primary"]};border-radius:999px;"></div>
+        </div>
+      </div>
 
-       st.markdown(f"""
-       <div style="font-size:14px;color:#4b5563;margin-top:6px;">
-       There is a <b>{gap}% gap</b> between initial engagement (Spark) and long-term impact (Horizon), indicating strong sustained outcomes beyond first impressions.
-       </div>
-       """, unsafe_allow_html=True)
+      <div style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px;margin-bottom:6px;">
+          <div style="flex:1;min-width:0;">Horizon</div>
+          <div style="font-weight:700;">{horizon}%</div>
+        </div>
+        <div style="height:14px;background:#f1f5f9;border-radius:999px;overflow:hidden;">
+          <div style="width:{(horizon / comparison_max) * 100:.1f}%;height:14px;background:{PALETTE["primary"]};border-radius:999px;"></div>
+        </div>
+      </div>
 
-       comparison_data = [
-           {"label": "Spark", "value": spark},
-           {"label": "Growth", "value": growth},
-           {"label": "Horizon", "value": horizon},
-       ]
-
-       bar_rows(comparison_data, "value", PALETTE["primary"], "%")
-
-       st.caption("This chart highlights the performance gap between Spark, Growth, and Horizon outcomes.")
+      <div style="font-size:13px;color:#6b7280;margin-top:10px;">
+        This chart highlights the performance gap between Spark, Growth, and Horizon outcomes.
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
     col_left, col_right = st.columns(2)
 
 # 🔵 SOCIAL (LEFT)
