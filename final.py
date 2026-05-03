@@ -798,7 +798,8 @@ with top_mid:
     </div>
     """, unsafe_allow_html=True)
 with top_right:
-    st.metric("Overall", f"{analytics['overall']}%")
+    with st.container(border=True, key="white_card_overall_percentage"):
+        st.metric("Overall", f"{analytics['overall']}%")
 
 main_col, side_col = st.columns([3.2, 1.25], gap="large")
 
@@ -1038,7 +1039,7 @@ with main_col:
         st.caption(f"Page {page} of {page_count}")
 
 with side_col:
-    with st.container(border=True, key="white_card_insight_bot"):
+    with st.container():
         st.subheader("Gen AI Insight Bot")
         for message in st.session_state.messages:
             if message["role"] == "assistant":
