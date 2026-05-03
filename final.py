@@ -814,7 +814,7 @@ with top_mid:
 with top_right:
     st.metric("Overall", f"{analytics['overall']}%")
 
-main_col, side_col = st.columns([3.2, 1.25], gap="large")
+main_col, side_col = st.columns([2.75, 1.45], gap="large")
 
 with main_col:
     st.markdown("""
