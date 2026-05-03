@@ -621,6 +621,10 @@ st.markdown("""
     box-shadow: 0 1px 6px rgba(0,0,0,0.05);
 }
 
+.main-content-narrow {
+    max-width: 980px;
+}
+
 div[data-testid="stVerticalBlockBorderWrapper"],
 .stApp div[data-testid="stVerticalBlockBorderWrapper"],
 .stApp div[data-testid="stVerticalBlockBorderWrapper"] > div,
@@ -814,9 +818,10 @@ with top_mid:
 with top_right:
     st.metric("Overall", f"{analytics['overall']}%")
 
-main_col, side_col = st.columns([2.75, 1.45], gap="large")
+main_col, side_col = st.columns([3.2, 1.25], gap="large")
 
 with main_col:
+    st.markdown('<div class="main-content-narrow">', unsafe_allow_html=True)
     st.markdown("""
     <div class="banner-core">
         <div style="font-size:13px;font-weight:700;text-transform:uppercase;">
@@ -1050,6 +1055,7 @@ with main_col:
         else:
             st.info("No mapped data available.")
         st.caption(f"Page {page} of {page_count}")
+    st.markdown("</div>", unsafe_allow_html=True)
 
 with side_col:
     with st.container(border=True, key="white_card_insight_bot"):
