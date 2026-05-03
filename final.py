@@ -660,6 +660,15 @@ div[data-testid="stVerticalBlockBorderWrapper"],
     box-shadow: 0 1px 6px rgba(0,0,0,0.05) !important;
 }
 
+.stApp div[class*="st-key-white_card_insight_bot"],
+.stApp div[class*="st-key-white_card_insight_bot"] > div,
+.stApp div[class*="st-key-white_card_insight_bot"] > div > div,
+.stApp div[class*="st-key-white_card_insight_bot"] div[data-testid="stVerticalBlock"],
+.stApp div[class*="st-key-white_card_insight_bot"] div[data-testid="stElementContainer"] {
+    background: #F8FAFC !important;
+    background-color: #F8FAFC !important;
+}
+
 /* COLUMN GAP FIX */
 div[data-testid="column"] {
     padding-left:4px;
