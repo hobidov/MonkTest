@@ -862,15 +862,17 @@ with top_right:
     <div style="
         background:#EAF7F4;
         border:1px solid #ccebe4;
-        border-radius:16px;
-        padding:14px 16px;
+        border-radius:14px;
+        padding:10px 14px;
         text-align:center;
         box-shadow:0 1px 6px rgba(0,0,0,0.05);
+        max-width:160px;
+        margin-left:auto;
     ">
-      <div style="font-size:13px;font-weight:700;color:#0f766e;text-transform:uppercase;">
+      <div style="font-size:11px;font-weight:700;color:#0f766e;text-transform:uppercase;letter-spacing:0;">
         Overall
       </div>
-      <div style="font-size:34px;font-weight:900;color:#14B8A6;line-height:1.1;margin-top:4px;">
+      <div style="font-size:28px;font-weight:900;color:#14B8A6;line-height:1.05;margin-top:3px;">
         {analytics['overall']}%
       </div>
     </div>
