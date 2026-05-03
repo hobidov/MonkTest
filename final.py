@@ -664,7 +664,12 @@ div[data-testid="stVerticalBlockBorderWrapper"],
 .stApp div[class*="st-key-white_card_insight_bot"] > div,
 .stApp div[class*="st-key-white_card_insight_bot"] > div > div,
 .stApp div[class*="st-key-white_card_insight_bot"] div[data-testid="stVerticalBlock"],
-.stApp div[class*="st-key-white_card_insight_bot"] div[data-testid="stElementContainer"] {
+.stApp div[class*="st-key-white_card_insight_bot"] div[data-testid="stElementContainer"],
+.stApp div[class*="st-key-white_card_quality_summary"],
+.stApp div[class*="st-key-white_card_quality_summary"] > div,
+.stApp div[class*="st-key-white_card_quality_summary"] > div > div,
+.stApp div[class*="st-key-white_card_quality_summary"] div[data-testid="stVerticalBlock"],
+.stApp div[class*="st-key-white_card_quality_summary"] div[data-testid="stElementContainer"] {
     background: #FFFBF1 !important;
     background-color: #FFFBF1 !important;
 }
