@@ -665,8 +665,8 @@ div[data-testid="stVerticalBlockBorderWrapper"],
 .stApp div[class*="st-key-white_card_insight_bot"] > div > div,
 .stApp div[class*="st-key-white_card_insight_bot"] div[data-testid="stVerticalBlock"],
 .stApp div[class*="st-key-white_card_insight_bot"] div[data-testid="stElementContainer"] {
-    background: #F8FAFC !important;
-    background-color: #F8FAFC !important;
+    background: #FFFBF1 !important;
+    background-color: #FFFBF1 !important;
 }
 
 /* COLUMN GAP FIX */
